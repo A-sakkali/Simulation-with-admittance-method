@@ -1,5 +1,5 @@
 #The Simulation of Optical Properties of Multilayer Structures by the Admittance Method
-  
+# definition of the function which calculates the coefficient R and T .
 def coefficient_I(struct, wavelength, incidence, polarization):
     #n,d,lam,theta0):
     """
