@@ -128,4 +128,5 @@ def coefficient_I(struct, wavelength, incidence, polarization):
     else:
       admittance = n_p
       T = (admittance[-1].real/ admittance[0].real) * abs(t)**2
+        
     return(r,t,R ,T)
