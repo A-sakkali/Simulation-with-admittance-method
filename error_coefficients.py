@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 #materials = [1.513**2, 1.455**2, 2.079**2, (1.9+4.8j)**2, 1.0003**2]
 materials = [4., 1.5**2, 2.+1.j]
 wav = 45.2
-
+ 
 
 print("WARNING: the impedance formalism only computes r and R for the moment")
 
