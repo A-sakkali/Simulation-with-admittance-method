@@ -9,7 +9,7 @@ nb_iter = 500 #averaging
 layers = np.arange(5, 181, 5)
 
 wav = 3.5
-ep1 = 2
+ep1 = 2 
 ep2 = 3
 materials = [1, 1.5**2, 2**2]
 incidence = 15 * np.pi/180
