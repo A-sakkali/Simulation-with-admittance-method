@@ -67,48 +67,59 @@ def coefficient_I(struct, wavelength, incidence, polarization):
              Type[g - 1]] * k0 ** 2 - alpha ** 2)
     else:
         gamma[g - 1] = np.sqrt(Epsilon[Type[g - 1]] * Mu[Type[g - 1]] * k0 ** 2 - alpha ** 2)
-
+        
+    #to avoid divergence for large angles 
     if incidence>np.pi / 2 :
        incidence= -incidence+np.pi
     else:
        incidence=incidence
-   
+        
+    # Effective reflective index TE
+
     n_s = np.zeros(g,dtype=complex)
     n_p = np.zeros(g,dtype=complex)
     n = np.array(np.sqrt(Epsilon*Mu))
+    
     # Effective reflective index TE
+    
     n_s[0] = n[Type[0]] * np.cos(incidence)
     n_s[1:] = np.sqrt(n[Type[1:]]**2 - n[Type[0]]**2 * np.sin(incidence)**2)
     opp = np.imag(n_s) > 0
     n_s = n_s - 2* n_s * (opp)
+    
      # Effective reflective index TM
+    
     n_p = n[Type]**2 / n_s
-
+    
+    # calculation of delta 
+    
     delta = np.array(2*np.pi*thickness*n_s/wavelength)
     temp = -1.j*np.tan(delta)
-    # the polarization choise 
+    
+    # choice of polarization for Initienization of the admittance  
+    
     if polarization == 0:
         admittance = n_s
         Y = admittance[-1]
-
     else:
         admittance = n_p
         Y = admittance[-1]
+    
     # Calculation of the complex admittence 
+    
     PR =1
-    for m in np.arange(g-2,-1,-1):
-        
+    for m in np.arange(g-2,-1,-1):    
      Y = (Y + admittance[m+1]*temp[m+1])/(1 + Y*temp[m+1]/admittance[m+1])
-
      if (m != 0):
+    # calculation of product    
            PR *= (np.cos(delta[m]) - 1.j * Y * np.sin(delta[m])/admittance[m])
 
-     # Calculation of r and t coefficient 
+     # Calculation of r and t coefficient
     r = (admittance[0]-Y) / (admittance[0]+Y)
     t = (r+1)/ (PR)
     if (polarization == 1):
       r=-r
-     # Calculation of R and T coefficient 
+    # Calculation of R and T coefficient 
     R = abs(r)**2
     if polarization==0:
      admittance = n_s
