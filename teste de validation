@@ -1,0 +1,207 @@
+from PyMoosh import *
+import PyMoosh as pm
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+
+print(pm.__version__)
+stack = [0,2,4,0,4,2,2,4,0,4,2,2,4,0,4,2,3]
+
+material_list = [1,"Glass","Silver","Water", "Gold", "Glass"]
+
+thickness = [500,1,10,1,1,1,1,10,1,1,1,1,10,1,1,1,0.5]
+wavelength = 600
+interface = Structure(material_list,stack, thickness)
+
+Ml1 = interface.materials[0]
+Ml2 = interface.materials[1]
+Ml3 = interface.materials[2]
+Ml4 = interface.materials[3]
+Ml5 = interface.materials[4]
+Ml6 = interface.materials[5]
+epsilon1 = Ml1.get_permittivity(600)
+epsilon2 = Ml2.get_permittivity(600)
+epsilon3 = Ml3.get_permittivity(600)
+epsilon4 = Ml4.get_permittivity(600)
+epsilon5 = Ml5.get_permittivity(600)
+epsilon6 = Ml6.get_permittivity(600)
+
+refractive_index_Ml1 = np.sqrt(epsilon1)
+refractive_index_Ml2 = np.sqrt(epsilon2)
+refractive_index_Ml3 = np.sqrt(epsilon3)
+refractive_index_Ml4 = np.sqrt(epsilon4)
+refractive_index_Ml5 = np.sqrt(epsilon5)
+refractive_index_Ml6 = np.sqrt(epsilon6)
+# You need to specify a wavelength at which to compute the permittivity, here 600 nm
+
+print("n-ml1 =" , np.sqrt(epsilon1))
+print("n-ml1 ="  , np.sqrt(epsilon2))
+print("permittivity=" , Ml1.get_permittivity(600))
+print("permittivity ="  , Ml2.get_permittivity(600))
+print("n-ml3 =" , np.sqrt(epsilon3))
+print("n-ml4 ="  , np.sqrt(epsilon4))
+print("permittivity=" , Ml3.get_permittivity(600))
+print("permittivity ="  , Ml4.get_permittivity(600))
+
+
+i_values=[]
+j_values=[]
+R0_values=[]
+T0_values=[]
+Rs0_values=[]
+Ts0_values=[]
+Rt0_values=[]
+Tt0_values=[]
+Ra0_values=[]
+ErreurTER=[]
+ErreurTET=[]
+ErreurTMR=[]
+ErreurTMT=[]
+R1_values=[]
+Rs1_values=[]
+T1_values=[]
+Ts1_values=[]
+Rt1_values=[]
+Tt1_values=[]
+Ra1_values=[]
+
+
+t0_values=[]
+t1_values=[]
+
+pi = math.pi
+step = pi / 100
+polTE=0
+polTM=1
+
+
+
+for i in range(0, int(pi/2*100)+1, int(step*100 )):
+
+# Incidence angle 
+# Polarization
+
+ #r0,R0 = coefficient_I(interface,wavelength,i/100,polTE)
+
+ r0,t0,R0,T0 = coefficient_I(interface,wavelength,i/100,polTE)
+ R0_values.append(R0)
+ T0_values.append(T0)
+
+ rs0,ts0,Rs0,Ts0 = coefficient_S(interface,wavelength,i/100,polTE)
+ Rs0_values.append(Rs0)
+ Ts0_values.append(Ts0)
+ #print(r0/rs0, rs0/r0)
+ rt0,tt0,Rt0,Tt0 = coefficient_T(interface,wavelength,i/100,polTE)
+ Rt0_values.append(Rt0)
+ Tt0_values.append(Tt0)
+#  ra0,ta0,Ra0,Ta0 = coefficient_A(interface,wavelength,i/100,polTE)
+#  Ra0_values.append(Ra0)
+ ErreurTER.append(100*abs(R0-Rs0)/Rs0)
+ ErreurTET.append(100*abs(T0-Ts0)/Ts0)
+# ErreurTEt.append(100*abs(Rt0-Rs0)/Rs0)
+ i_values.append(i/100)
+ 
+
+
+ for j in range(0, int(pi/2*100)+1, int(step*100 )):
+
+# # Incidence angle 
+# # Polarization
+  #r1,R1= coefficient_I(interface,wavelength,j/100,polTM)
+
+  r1,t1,R1,T1= coefficient_I(interface,wavelength,j/100,polTM)
+  R1_values.append(R1)
+  T1_values.append(T1)
+  rs1,ts1,Rs1,Ts1 = coefficient_S(interface,wavelength,j/100,polTM)
+  Rs1_values.append(Rs1)
+  Ts1_values.append(Ts1)
+  rt1,tt1,Rt1,Tt1 = coefficient_T(interface,wavelength,j/100,polTM)
+  Rt1_values.append(Rt1)
+  Tt1_values.append(Tt1)
+
+ # ra1,ta1,Ra1,Ta1 = coefficient_A(interface,wavelength,j/100,polTM)
+  #Ra1_values.append(Ra1)
+  ErreurTMR.append(100*abs(R1-Rs1)/Rs1)
+  ErreurTMT.append(100*abs(T1-Ts1)/Ts1)
+  j_values.append(j/100)
+  
+
+
+
+
+
+#print('Fresnel coefficient r= ' , r)
+#print('Reflectance R= ',R)
+#print('Fresnel coefficient t= ', t)
+#print('transmittance T=',T)
+
+plt.rcParams['figure.dpi'] = 150
+plt.figure(figsize=(10,10))
+yl = (-0.1,1.1)
+plt.subplot(221)
+plt.plot(i_values ,np.real(R0_values),label="admittence TER")
+plt.plot(i_values ,np.real(Rs0_values),'+' ,label="matriceS TER")
+#plt.plot(i_values ,Rt0_values ,label="matriceT T0")
+#plt.plot(i_values ,Ra0_values ,label="matrice Abeles0")
+plt.ylabel('Reflection coefficient  ')  
+plt.xlabel('angle')
+plt.legend()
+plt.subplot(222)
+plt.plot(i_values ,np.real(T0_values) ,label=" admittence TET ")
+plt.plot(i_values ,np.real(Ts0_values),'+' ,label=" matriceS TET ")
+#plt.plot(i_values ,np.real(Tt0_values) ,label="matriceT T0")
+plt.ylabel('Transmission coefficient  ')  
+plt.xlabel('angle')
+
+plt.legend()
+plt.subplot(224)
+plt.plot(j_values ,T1_values ,label="admittence TMT")
+plt.plot(j_values ,Ts1_values,'+', label="matriceS TMT")
+#plt.plot(j_values ,Tt1_values ,label="matriceT T1")
+# plt.ylim(-0.1,1.5)
+plt.ylabel('Transmission coefficient ')  
+plt.xlabel('angle')
+
+plt.legend()
+plt.subplot(223)
+plt.plot(j_values ,R1_values ,label="admittence TMR")
+plt.plot(j_values ,Rs1_values ,'+',label="matriceS TMR")
+#plt.plot(j_values ,Rt1_values ,label="matriceT R1")
+#plt.plot(j_values ,Ra1_values ,label="matrice Abeles1")
+plt.ylabel('Reflection coefficient  ')  
+plt.xlabel('angle')
+
+plt.legend()
+plt.savefig('figure T.png')  # Enregistre la figure sous forme d'image PNG
+print("Saved")
+plt.rcParams['figure.dpi'] = 150
+plt.figure(figsize=(10,10))
+plt.figure(3) 
+plt.subplot(221)
+plt.plot(j_values ,ErreurTMR, label="TMR ")
+plt.legend()
+plt.subplot(222)
+plt.plot(j_values ,ErreurTMT,label="TMT ")
+plt.legend()
+plt.subplot(223)
+plt.plot(i_values ,ErreurTER,label="TER ")
+plt.legend()
+plt.subplot(224)
+plt.plot(i_values ,ErreurTET,label="TET ")
+#plt.plot(i_values ,ErreurTEIt ,label="TEt")
+#plt.ylim(-1,100)
+# plt.ylabel('Erreur')
+# plt.xlabel('i')
+
+plt.legend()
+plt.savefig('figureerreur.png')  # Enregistre la figure sous forme d'image PNG
+
+
+window = Window(70*wavelength, 0.5, 30., 30.)
+beam = Beam(wavelength, np.pi/4, 0, 10*wavelength)
+E = field(interface,beam,window)
+
+plt.figure(2)
+plt.imshow(abs(E),cmap='jet',extent=[0,window.width,0,sum(interface.thickness)],aspect='auto')
+plt.colorbar()
+plt.savefig('figur3.png')
