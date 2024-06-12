@@ -10,7 +10,7 @@ materials = [1, 1.2**2, 1.5**2 ]
 unit = "nm"
 wav = 600
 eps = 1e-12
-nb = 100
+nb = 100 
 
 
 print("WARNING: the impedance formalism only computes r and R for the moment")
