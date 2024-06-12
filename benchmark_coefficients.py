@@ -9,7 +9,7 @@ mat2 = 1.2
 
 
 unit = "nm"
-wav = 600
+wav = 600 
 
 ep1 =  110
 ep2 =  wav/(4*mat2)
